@@ -1,0 +1,28 @@
+function tp()
+    %load 'mat3.mat'
+    %load('pde225.mat')
+    %load('hydcar20.mat')
+    %load 'mat3';
+    [A,~]=bwm200;
+    n=size(A,2);
+    B=(1:n)';
+    %[Mu,Ml]=ilu(A);
+    Mu=eye(n);Ml=diag(diag(A));
+    %% gmres PRE
+    tic
+    [~,~,~,~,resvec1] = gmresPre(A,B,zeros(n,1),1e-6,300,Mu,Ml);
+    fprintf("gm
+    toc
+    
+    [~,~,~,~,resvec2] = gmresRes(A,B,zeros(n,1),1e-6,30,300,Mu,Ml);
+    [~,~,~,~,resvec3] = dqgmres(A,B,zeros(n,1),1e-6,20,300,Mu,Ml);
+    [~,~,~,~,resvec4] = gmres(A,B,30,1e-6,10,Mu,Ml);
+    hold on;
+    beta=norm(Ml\(Mu\B));
+    semilogy(resvec1/beta,'b*');
+    semilogy(resvec2/beta,'k*');
+    semilogy(resvec3/beta,'r*');
+    semilogy(resvec4/beta,'--');
+    legend 'gmresPre' 'gmresRes' 'dqgmres' 'gmresMatlab'
+end
+

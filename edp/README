@@ -1,0 +1,31 @@
+%
+% Fichiers TP-Projet EDP 
+% 2013-2014
+
+%
+% Fichier de donnees 
+%
+
+*.dat            : fichiers de donnees concernant le maillage et  conditions limites
+u_d.m            : solution a la frontiere de type Dirichlet
+maillage_carre.m : maillage a base d'elements triangulaires
+f.m              : fonction f
+g.m		 : fonction g
+
+%
+% Visualisation
+%
+
+show.m            : utile pour la visualisation
+
+%
+% Fichiers ajoutés pour le projet
+%
+
+eta.m : calcul la valeur de alpha et du gradient de la fonction eta sur un triangle au sommet i du triangle
+maillage_carre.m : modifié pour pouvoirs calculer des maillages avec quadrangle
+triangleValeur.m : calcul des valeurs associées à un triangle telles que son aire ou son barycentre
+assemblageTriangle et assemblageQuadrangle : calcul la matrice de raideur A et le second membre b du problème par rapport 
+au maillage. On prend aussi en compte les conditions de Dirichlet
+tracerErreur : prends un entier n en paramètre correspondant au pas de subdivision maximal à faire. Elle va ensuite
+tracer en loglog l'erreur de la méthode par rapport au pas.

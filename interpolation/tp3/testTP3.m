@@ -1,0 +1,15 @@
+z=[1,5,1;0.5,2,0.5;1,3,1;1,4,3;5,8,1];
+x=0:4;
+y=0:2;
+disp('Test tp2 : degrés 1 et 1');
+tracer3d(x,y,z,1,1,0);
+pause;
+close;
+disp('Test tp2 : degrés 5 et 10');
+tracer3d(x,y,z,10,5,0);
+pause;
+close;
+disp('Test tp2 : degrés 10 et 5');
+tracer3d(x,y,z,10,5,0);
+pause;
+close;
