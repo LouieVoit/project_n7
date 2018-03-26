@@ -1,0 +1,156 @@
+Ce sont les deux derniers points, sur le temps de calcul et l'espace de stockage, et sur le préconditionnement, qui nous amènent à considérer les améliorations gmres redémarré (gmres restart) et gmres tronqué (dqgmres). Dans les deux algorithmes on utilisera le préconditionnement à gauche, en choisissant des matrices de préconditionnement spécifiques telles que la diagonale de A, ou des factorisations de LU incomplètes … Ce point sera plus approfondi dans la partie sur les tests numériques. 
+
+\subsection{\texttt{gmres} redémarré}
+On peut par exemple tester de résoudre Ax=b par \texttt{gmres} sans redémarrage sur la matrice gre\_1107 donnée dans le sujet : il faut au total 916 itérations pour résoudre avec une tolérance de \(1e-6\). La matrice contenant les vecteurs de la base est donc une matrice \(1107 \times 916\) à la dernière itération. Dans le cas d'une convergence lente comme celle ci, le nombre d'itération devient très important, et donc la taille de la matrice contenant les vecteurs de base de l'espace devient très importante tout comme le nombre de calcul a effectuer pour calculer ces vecteurs. D'où l’intérêt de redémarrer la méthode à partir d'un certains rang: on donne en paramètre de l’algorithme un entier k, appelé fenêtre de redémarrage, est lorsque \texttt{gmres} aura dépassé en nombre d'itération cet entier k, on relance \texttt{gmres} avec comme vecteur initial le vecteur calculé à l'étape k. 
+\newpage
+Voici l'algorithme tel qu'il est implanté en MatLab :
+\begin{lstlisting}
+function [x, flag, relres, iter, resvec] = gmresRes(A, b, x0, m, maxit, tol, M1, M2)
+     x=x0;
+     r=M2\(M1\(b-A*x));
+     beta=norm(r);
+     normRHS=norm(M2\(M1\b));
+     normR=beta;
+     normB=norm(b);
+     V(:,1)=r/norm(r);
+     j=1;
+     resvec(j)=norm(r);
+     convergence=0;
+     while (j<maxit) && (j<=m) && (~convergence)
+         w=M2\(M1\(A*V(:,j)));
+         for i=1:j
+             H(i,j)=V(:,i)'*w;
+             w=w-H(i,j)*V(:,i);
+         end
+         H(j+1,j)=norm(w);
+         if (H(j+1,j)==0)
+             j=maxit+1;
+         else
+             V(:,j+1)=w/H(j+1,j);
+             e=zeros(j+1,1);e(1)=1;
+             [gamma,R]=qr(sparse(H),beta*e);
+             y=R\(gamma);
+             resvec(j+1)=abs(gamma(j+1));
+             normR=resvec(j+1);
+         end
+         x = x0 + V(:,1:j)*y;
+         if (normR/normRHS <= tol)
+             convergence = (norm(b-A*x)/normB)<=tol;
+         end
+         % Cas ou la methode stagne
+         if abs(resvec(j+1)-resvec(j))<=1e-6
+             convergence=2;
+         end
+         j=j+1;
+     end
+    iter=j-1;
+    relres=norm(M2\(M1\(b-A*x)))/norm(M2\(M1\b));
+    flag= (j>=maxit);
+    if (~convergence && j<maxit)
+        [x,flag,relres,iter_aux,resvec_aux]=gmresRes(A,b,x,m,maxit-m,tol,M1,M2);
+        iter=iter+iter_aux;
+        resvec=[resvec,resvec_aux];
+    end    
+    if (convergence==2)
+         flag=2;
+     end
+end
+\end{lstlisting}
+ Ceci permet de limiter la taille de la matrice V à \(n\times k\), et de relancer l'algorithme avec un vecteur qui doit être plus proche de la solution que le vecteur donné précédemment. 
+ \newpage
+ \subsection{\texttt{dqgmres}} 
+
+La plus grosse amélioration de gmres est dqgmres avec les rotations de Givens et la mise a jour incrémentale de la factorisation QR de la matrice \(\bar{H_j}\). La principale idée de cet algortihme est de faire une orthogonalisation seulement par rapport aux k (fenêtre donné en paramètre de l'algorithme) vecteurs précédents de la base pour calculer le jème vecteur, et ensuite de calculer la factorisation QR de la matrice \(H_{j}\) en incrémentant seulement l'ancienne factorisation de \(H_{j-1}\). Le gros avantage ici est que le coût d'orthogonalisation est beaucoup plus faible et que seulement les k vecteurs de la base ont besoin d'êtres stockés  pour calculer cette orthogonalisation. En effet, on peut trouver une formule de récurrence permettant de tout mettre à jour par rapport aux résultats de l'itération précédente. \\
+
+
+Voici les changements apportés dans l'agorithme de base de GMRES dans leur ordre d'apparition à l'intérieur de la boucle tant que:
+\begin{itemize}
+\item On orthogonalise seulement le j-ème vecteur par rapport au k vecteurs précédents.
+\item On met ensuite à jour la factorisation QR de la matrice \(\bar{H}_{j+1}\). Pour ce faire, au vu de la forme triangulaire supérieure de la matrice avec une sous diagonale non nulle, on a fort intérêt à utiliser les rotations de Givens pour éliminer les termes sous diagonaux : en effet, pour une matrice de taille n, on utilisera seulement n rotations pour obtenir sa factorisation QR. Pour ne pas refaire la factorisation QR à chaque itération, on remarque que  \(\bar{H}_{j+1}\) est de la forme \(\bar{H}_{j}\) en haut à gauche, une ligne nulle en bas à gauche, et le nouveau vecteur colonne à droite. Donc il suffit d'appliquer les j rotations de Givens précédentes à la dernières colonnes de  \(\bar{H}_{j+1}\), puis d'appliquer un nouvelle rotation pour annuler le terme en  (j+2,j+1). Il faut ensuite mettre à jour la solution \(x_{j+1}\). Pour ce faire, on remarque que comme Q est orthogonale, on a : \( min(\norm{\beta e_1-\bar{H_{j}} y}) = min(\norm{g_{j}-R_{j}y_{j}})\). Donc que \(y_{j}=R_{j}^{-1}g_{j}\). Comme \(x_{j}=x_{0}+V_{j}R_{j}^{-1}y_{j}\). En posant \(P_{j}=V_{j}R_{j}^{-1}\) .On obtient facilement un relation de récurrence donnant le dernier vecteur de \(P_{j}\) en fonction des k vecteurs précédents. On obtient de même une relation donnant le vecteur $g_{j}$ en fonction de $g_{j-1}$. C'est d'ailleurs dans ce vecteur $g_{j}$ que l'on trouve la norme du résidu nous permettant de tester la convergence ou non de dqgmres. Ainsi on a bien une relation liant $x_{j+1}$ a $x_{j}$.
+\end{itemize}
+\newpage
+On a bien au final que des matrices de taille au plus n*k avec dqgmres et le test de convergence est très simple a effectuer. Voici ce que l'on a besoin de stocker:
+\begin{itemize}
+\item Une matrice de taille 2*k, contenant les coefficients des k rotations de Givens. Leur indice de colonne correspond à l'indice de la ligne où se trouve le premier cosinus dans la matrice.
+\item Une matrice Pj de taille n*k.
+\item Une matrice Vj de taille n*k.
+\item Une matrice \(\bar{H}_{j}\) de taille j*j+1.
+\item Le vecteur $x_{j}$
+\end{itemize}
+
+
+On a donc un gain considérable en terme de stockage par rapport à gmres de base, et aussi un gain de temps par l'orthogonalisation partielle et la mise à jour incrémentale de la factorisation QR.
+Voici l’algorithme tel qu'il est codé en MatLab :
+\begin{lstlisting}
+function [x, flag, relres, iter, resvec] = dqgmres(A, b, x0, k, maxit, tol,M1,M2)
+     x=x0;
+     r=M2\(M1\(b-A*x));
+     beta=norm(r);
+     V(:,1)=r/beta;
+     normRHS=norm(M2\(M1\b));
+     normR=beta;
+     normB=norm(b);
+     j=1;
+     resvec(j)=beta;
+     convergence=0;
+     %Variables utiles pour la facto QR
+     gamma2=beta;
+     while (~convergence) && (j<maxit) 
+         w=M2\(M1\(A*V(:,j)));
+         for i=max(1,j-k+1):j
+             H(i,j)=V(:,i)'*w;
+             w=w-H(i,j)*V(:,i);
+         end
+         H(j+1,j)=norm(w);
+         if (H(j+1,j)==0)
+             j=maxit+1;
+         else
+             %Calcul du nouveau vecteur de la base
+             V(:,j+1)=w/H(j+1,j);
+             %Mise a jour de la factorisation QR par les matrices de Givens
+             for i=max(1,j-k):j-1
+                 %On recréé la matrice de rotation de Givens a partir du
+                 %vecteur stockant les coefficients des matrices de Givens
+                 c=giv(1,i);
+                 s=giv(2,i);
+                 aux=eye(j);
+                 aux(i,i)=c;aux(i+1,i+1)=c;aux(i+1,i)=-s;aux(i,i+1)=s;
+                 H(1:j,j)=aux*H(1:j,j);
+             end
+             %On calcul les nouveaux coefficients des matrices de Givens
+             c=H(j,j)/sqrt(H(j,j)^2+H(j+1,j)^2);
+             s=H(j+1,j)/sqrt(H(j,j)^2+H(j+1,j)^2);
+             giv(1,j)=c;
+             giv(2,j)=s;
+             %On fait l'inrémentation de la factor QR de H
+             gamma1=c*gamma2;
+             gamma2=-s*gamma2;
+             H(j,j)=c*H(j,j)+s*H(j+1,j);
+             H(j+1,j)=0;
+             if (j>1)
+                P(:,j)=(V(:,j)-P*H(1:j-1,j))/H(j,j);
+             else
+                P(:,j)=V(:,j)/H(j,j); 
+             end
+             %On incremente x
+             x=x+gamma1*P(:,j);
+         end
+         resvec(j+1)=abs(gamma2);
+         normR=resvec(j+1);
+         if (normR/normRHS <= tol)
+             convergence = (norm(b-A*x)/normB)<=tol;
+         end
+         % Cas ou la methode stagne
+         if abs(resvec(j+1)-resvec(j))<=1e-6
+             convergence=2;
+         end
+         j=j+1;
+     end   
+     iter=j-1;
+     relres=(norm(b-A*x)/normB);
+     flag= (j>=maxit);
+     if (convergence==2)
+         flag=2;
+     end
+end
+\end{lstlisting}

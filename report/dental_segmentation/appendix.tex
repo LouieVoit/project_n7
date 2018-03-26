@@ -1,0 +1,27 @@
+\subsection{Local Chan-Vese}
+\label{localcode}
+\subsubsection*{Local Chan-Vese code}
+\lstinputlisting{code/localized_seg.m}
+\subsubsection*{Demo of the Local Chan-Vese method}
+To run the local active contour method demo, write \texttt{localized\_seg\_demo} in the \texttt{MatLab} prompt. You can set different parameters such as the mask initialisation and local method parameters. Here is the code :
+\lstinputlisting{code/localized_seg_demo.m}
+
+\subsection{Clustering}
+\label{clusteringcode}
+\subsubsection*{im2mask}
+The first code is \texttt{im2mask.m}, which creates a mask for Chan-Vese initialisation from an image and a method as described in the code documentation. It uses the \texttt{GKmeans.m} file and \texttt{sqdist.m}. You can modify several parameters inside the code of \texttt{im2mask} such as the method used for the clustering (Global Kmeans or MatLab Kmeans), or the number of cluster.    
+\lstinputlisting{code/im2mask.m}
+\subsubsection*{TestAuto}
+\texttt{TestAuto.m} runs an automatic test from an image I and gives the extracted tooth from the Chan-Vese method. 
+\lstinputlisting{code/TestAuto.m}
+
+\subsection{Principal Component Analysis}
+\label{pcacode}
+\subsubsection*{recText}
+\texttt{recText} aims at finding the gum in a dental radiography. Its inputs are an image I, and the path to the gum basis matrix and the other parts of the tooth basis matrix. The matrix columns are the vector's bloc basis from the PCA, and the last row is the mean from the set of points used in the PCA. There are already two database (so four matrix) in our Dropbox files : one was created by using three textures on each radiography, the other by using six textures. \texttt{recText} output is a black and white mask (the gum is black, other parts are white). Here is the code :
+\lstinputlisting{code/recText.m}
+\subsubsection*{TestDent}
+\texttt{TestDent} is a script used to create the gum database. First, we select \texttt{nText} regions of texture we want to analyse, then we run the PCA on those regions. We then try to rebuild every bloc of the radiography by projecting those blocs on the \texttt{nText} texture basis created before. Finally, we try to sort each bloc by their texture by using the two criteria described in the PCA section (each texture has its own intensity of gray). In the code, we can modify the number of texture (\texttt{nText}), or the size of a bloc (\texttt{w}) used in the PCA, or the number of basis vector used in the picture reconstruction (\texttt{coeffProj}). Here is the code :
+\lstinputlisting{code/TestDent.m}
+
+

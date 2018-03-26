@@ -1,0 +1,47 @@
+\documentclass[a4paper,12pt]{article}
+ \usepackage[utf8]{inputenc}
+ \usepackage[english]{babel}
+ \usepackage[T1]{fontenc}
+ %IMAGE
+ \usepackage{float}
+ \usepackage{graphicx}
+ \usepackage[export]{adjustbox}
+ %MATHS
+ \usepackage{amsmath}
+ \usepackage{amsfonts}
+ %CODE MATLAB
+ \usepackage[]{mcode}
+ \lstset{
+  %basicstyle=\footnotesize
+  %basicstyle=\ttfamily\scriptsize
+}
+ 
+ %CMD
+ \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+ 
+\title{\textbf{Internship Report \\ Image segmentation on tooth radiography}}
+\author{Louis VIOT, Quentin BERNARD}
+\date\today
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Abstract and acknowledgments}
+\input{intro.tex}
+\newpage
+\section{Chan-Vese algorithm}
+\input{chanvese.tex}
+\newpage
+\section{Differents way to decrease parameters dependency}
+\input{amelioration.tex}
+\newpage
+% Bonjour Quentin <3 Super utile ce commentaire
+%\section{Automation tests}
+%\newpage
+\section{Appendix}
+\input{appendix.tex}
+\newpage
+\section{Bibliography}
+\input{biblio.tex}
+\end{document}

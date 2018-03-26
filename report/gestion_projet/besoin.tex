@@ -1,0 +1,26 @@
+Le projet \textbf{On Set Reconstruction Tool} a pour objectifs principaux de permettre à l'utilisateur de recréer en 3D une scène qu'il a prit auparavant en photo. 
+Notre programme devra être capable d'aller chercher dynamiquement les photos présentent dans l'appareil photo de l'utilisateur (par USB et WIFI) et de relancer
+une reconstruction. Nous avons, aprés une analyse approfondie des besoins des clients et discussions avec ceux ci, isolé deux points trés importants du projet.
+Nous devorns modifier une librairie (OpenMVG) déjà 
+existante ainsi que créer une intefarce graphique gérant dynamiquement les photos de l'utilisateur.\\
+\begin{itemize}
+\item La partie concernant la modification de openMVG a plusieurs enjeux : elle permettra de faire évoluer la bibliothèque déjà existante et en plus 
+nous permettra de l'utiliser dans le cadre du projet. La bibliothèque ne permet actuellement que de faire des reconstructions à partir d'un ensemble 
+d'images qui est fixé lors du lancement de l'algorithme. Notre objectif est de faire évoluer openMVG de telle sorte que l'on puisse
+ajouter dynamiquement des photos même lorsque openMVG est lancé avec un ensemble de photos initial. Ceci implique bien évidemment
+une compréhension assez profonde des algorithmes présents dans openMVG, mais aussi du code en C++ et donc du langage C++. Ceci a été,
+lors de la lecture du sujet, l'un des atouts de ce projet : le C++ n'est malheureusement pas un langage enseigné à l'ENSEEIHT alors que 
+celui ci est grandement utilisé dans l'industrie de nos jours. Mais ceci, la compréhension du code, est aussi un problème car
+celui ci n'est pas très bien documenté et est assez "compliqué", du moins avec le peu de temps que l'on a pour le projet long, et demande
+quelques notions de mathématiques orientées image et multimédia. \\
+\item La partie concernant l'interface graphique soulève quant à elle beaucoup de questions : dans le document despriptif du problème, 
+le langage utilisé pour coder cette interface est Qt, mais après quelques recherches et quelques discussions avec le client, il s'avère qu'il
+y a beaucoup de variantes possibles (QtQuick, QML ...), et ce sont des langages d'IHM que nous n'avons pas du tout aboder à l'école. Ceci est
+bien sur un atout car cela permettra d'élargir nos connaissance, mais en temps limité, cela représente aussi un vrai défi. \\
+\end{itemize}
+
+Après de nombreuses incompréhensions avec le client, le code rédigé sera principalement en python3 : langage qui n'est pas non plus
+enseigné à l'école. Ainsi, ce projet nous permet réellement beaucoup d'apprendre mais s'annonce difficile au vu de ce que l'on à a faire
+et du temps trés limité. Par rapport aux besoins des clients, nous avons eu dans un premier temps l'idée de ne pas modifier 
+openMVG et de se limiter à une reconstruction dont l'ensemble d'images initiales est fixe (on ne peut pas rajouter de photo dynamiquement). 
+On modifiera dans un second temps cette bibliothèque.

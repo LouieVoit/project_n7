@@ -1,0 +1,18 @@
+On démontre facilement que pour avoir un résidu minimal à l'étape j, minimiser \(\norm{b-Ax_{j}}\) revient à minimiser \(\norm{\beta e_1 -\bar{H_j}y_j }\). Donc en faisant une factorisation QR de \bar{H_j}, peu coûteuse au vu de la forme de la matrice \(\bar{H_j}\) , on trouve facilement la solution et la norme du résidu associée.\\
+
+	On rappelle rapidement l'algorithme qu'utilise la méthode \texttt{gmres}:\\
+\begin{itemize}
+\item{initialisation :} \(v_1\), premier vecteur de la base de l'espace de Krylov, est le résidu initial sur sa norme. 
+
+\item{Tant que pas de convergence :} on calcul \(v_j\) le j-ème vecteur de l'espace en orthogonalisant  \(Av_j\) par rapport au j-1 précédents vecteurs puis en le normalisant. On calcul ensuite une factorisation QR de \(\bar{H_j}\), on trouve la solution de minimisation et le résidu associé. Si ce résidu est assez petit, on s'arrête. 
+\end{itemize}
+
+\subsection{Calculs et stockage associé à \texttt{GMRES}}
+Ainsi, à l'étape j, \texttt{gmres} nécessite le stockage d'une matrice de taille \(n\times j\) contenant les vecteurs de la base de l'espace de Krylov de taille j. Après calcul, on peut montrer que le coût total en nombre d'opérations est de l'ordre de \(2njnz(A)+2j^2 n\). Si la convergence est lente, ie j grand, \texttt{gmres} nécessite beaucoup de calcul et un grand espace de stockage, c'est pourquoi il est nécessaire de l'améliorer, surtout pour de grandes matrices. 
+
+\subsection{Préconditionnement}
+On peut montrer par exemple sur l'algorithme GMRES que la norme du résidu à l'étape j est donnée par:
+\[\norm{r_j}=min_{ p \in P_{j-1},p(0)=1}\norm{p(A)(r_{0})}\]
+
+Mais aussi que si A est diagonalisable avec m valeurs propres distinctes, alors \texttt{gmres} s'arrêtera en au plus m itérations.\\
+Ainsi, pour des matrices avec beaucoup de valeurs propres distinctes, ou pour lesquelles la norme précédente est importante, l’algorithme \texttt{gmres} mettra beaucoup de temps pour converger. C'est pourquoi le préconditionnement de la matrice A est très important. Notre but avec le préconditionnement est de trouver des matrices M1 et M2 inversibles telles que \(M1 \times M2 \times A\) ait peu de valeurs propres distinctes, et telles que \(M1 \times M2 \times A\) soit proche de I au sens d'une certaine norme. Bien sur, il est nécessaire que le calcul de M1 et M2 soit facile et que la multiplication \(M1 \times M2 \times A\) soit peu coûteuse, sinon ce n'est pas intéressant.

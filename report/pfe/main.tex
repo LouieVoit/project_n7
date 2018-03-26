@@ -1,0 +1,36 @@
+\documentclass[a4paper,12pt]{article}
+ \usepackage[utf8]{inputenc}
+ \usepackage[french]{babel}
+ \usepackage[T1]{fontenc}
+ %IMAGE
+ \usepackage{graphicx}
+ \usepackage[export]{adjustbox}
+
+%HEADER AND FOOTER 
+\usepackage{fancyhdr}
+%\setlength\headheight{26pt} 
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{24/04/2015 - Louis Viot}
+\lhead{Synthèse SRLC}
+\lfoot{\includegraphics[scale=0.65]{enseeiht.jpg}}
+\rfoot{Page \thepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+\input{title.tex}
+\newpage
+\tableofcontents
+\section*{Introduction}
+\input{intro.tex}
+\newpage
+\section{Contexte du stage}
+\input{context.tex}
+\section{Problématique du stage}
+\input{probleme.tex}
+\newpage
+\section{Solutions envisagées}
+\input{solution.tex}
+\end{document}

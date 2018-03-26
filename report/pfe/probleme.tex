@@ -1,0 +1,12 @@
+Comme dit précedemment, une application PROCOR est constituée d'un ensemble de composant, ou modèle, interagissant entre eux. Un composant peut être le bain de corium, ou le bain débris que forme le corium en tombant dans 
+l'eau du fond de cuve. Chaque modèle est décrit par ses paramètres physiques (chaleur, taille ...), par ses variables (température, masse ...) et enfin par ses équations. Le système d'équation d'un modèle peut 
+être un système d'équations différentielles ordinaires, ou encore un système d'équations aux dérivées partielles, ou encore un système linéaire ou une fonction analytique issue de l'expérience. Un modèle a un ou plusieurs états : par 
+exemple le bain de corium peut être liquide ou solide. Dans chaque modèle, on a des règles de transition qui permettent de savoir s'il on est dans un état ou un autre. Ces règles prennent généralement la forme de seuil : en fonction
+de la valeur d'une certaine fonction par rapport à ce seuil, on est dans un état ou l'autre. 
+
+Une fois les composants définis dans une application PROCOR, il faut définir les intéractions entre ces composants. Ces intéractions prennent généralement la forme de termes d'échanges (échange de masse par exemple entre 
+le lit de débris et le bain de corium, ou échange de chaleur du bain de corium vers le lit de débris). D'un point vu du code Java, ces intéractions impliquent que les paramètres en entrée d'un modèle soient liés aux variables de 
+sortie d'un autre modèle. La simulation se fait ensuite sur deux pas de temps : un pas de temps interne à chaque composant et un pas de temps externe. A chaque pas de temps externe, on va synchroniser tous les composants entre eux. 
+Ce pas de temps externe, qui est fixé de manière heuristique et parfois à l'aide d'expériences physiques, n'est généralement pas optimal et ne permet pas de minimiser l'erreur commise.Ainsi, actuellement, lorsque l'on créé 
+une application PROCOR, il faut créer à la main les liaisons entre modèles et définir les différents pas de temps. C'est sur ce point que le stage doit se concentrer : essayer d'automatiser le couplage entre modèle et prévoir
+l'erreur commise en fonction de ce couplage.

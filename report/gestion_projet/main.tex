@@ -1,0 +1,40 @@
+\documentclass[a4paper,12pt]{article}
+ \usepackage[utf8]{inputenc}
+ \usepackage[french]{babel}
+ \usepackage[T1]{fontenc}
+ %IMAGE
+ \usepackage{graphicx}
+ \usepackage[export]{adjustbox}
+
+%HEADER AND FOOTER 
+\usepackage{fancyhdr}
+%\setlength\headheight{26pt} 
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{12/02/2015 - Louis Viot}
+\lhead{Gestion de Projet - Rapport - version 1.0 }
+\lfoot{\includegraphics[scale=0.65]{enseeiht.jpg}}
+\rfoot{Page \thepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+\input{title.tex}
+\newpage
+\tableofcontents
+\section*{Résumé}
+\input{intro.tex}
+\newpage
+\section{Expression des besoins du projet}
+\input{besoin.tex}
+\section{Organisation de l'équipe}
+\input{organisation.tex}
+\section{Planning du projet}
+\input{planning.tex}
+\section{Analyse et gestion des risques}
+\input{risque.tex}
+\section{Réunions prévues et conclusion}
+\input{conclusion.tex}
+
+\end{document}

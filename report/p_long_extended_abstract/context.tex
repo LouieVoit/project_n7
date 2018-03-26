@@ -1,0 +1,13 @@
+Right now, on a shooting for the cinema, people in charge of special effects would really benefit from a tool 
+allowing them to have the real time pre-visualization of special effects. That is what the European Project POPART ~\cite{popart}
+is all about. Our project is casted in this context : we had, first, to collect a dataset of images from the scene and do 
+the 3D reconstruction, and then, build a graphical user interface to automatize the whole process. 
+The 3D reconstruction of a scene from images is a well known problem in computer vision so there are already existing library : we have used the openMVG library. openMVG uses tools that implement the "Structure From Motion"
+techniques. Those techniques are working that way : from a dataset of images, openMVG computes the matching points between
+images and then computes the 3D scene (coordinates of cameras and points in the scene). So the 3D reconstruction is not a real problem for us, 
+the main goal of the project is to build the GUI that automatize the reconstruction because today, people on a 
+shooting have to use openMVG as a command line and to launch again the reconstruction each time they have a new picture.
+So the GUI must allow user to automatically import pictures, then automatically launch the reconstruction, and then do a
+ 3D rendering of the scene. The project initially aimed at improving the openMVG library so that the user could add 
+pictures while a reconstruction is being done, preventing the reconstruction to be re-launched and started from scratch. But
+this was totally out of our means and we wouldn't have had the enough amount of time.

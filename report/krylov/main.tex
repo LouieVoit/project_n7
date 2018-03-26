@@ -1,0 +1,38 @@
+\documentclass[a4paper,12pt]{article}
+ \usepackage[utf8]{inputenc}
+ \usepackage[french]{babel}
+ \usepackage[T1]{fontenc}
+ %IMAGE
+ \usepackage{graphicx}
+ \usepackage[export]{adjustbox}
+ %MATHS
+ \usepackage{amsmath}
+ %CODE MATLAB
+ \usepackage[]{mcode}
+ \lstset{
+  basicstyle=\ttfamily\scriptsize
+}
+ 
+ %CMD
+ \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+ 
+\title{\textbf{Rapport : Projet méthode de Krylov}}
+\author{Louis VIOT}
+\date\today
+\begin{document}
+\maketitle
+\vspace{5cm}
+\tableofcontents
+\newpage
+\section{Introdution}
+\input{intro.tex}
+\newpage
+\section{Méthode \texttt{GMRES}}
+\input{gmres.tex}
+\section{Amélioration de la méthode}
+\input{amelioration.tex}
+\newpage
+\section{Tests numériques}
+\input{test.tex}
+\end{document}
